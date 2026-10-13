@@ -26,7 +26,7 @@ Dependências, por ferramenta de auditoria: `pip-audit` aponta 8 vulnerabilidade
 
 ### Projeto 1 — code-smells-project (Flask, e-commerce)
 
-`app.py` (88 linhas), `controllers.py` (292), `models.py` (314) e `database.py` (86). Sem camada de serviço nem ORM; todo SQL é montado por concatenação de strings. 18 endpoints para produtos, usuários, pedidos e relatório de vendas.
+`app.py` (88 linhas), `controllers.py` (292), `models.py` (314) e `database.py` (86). Sem camada de serviço nem ORM; todo SQL é montado por concatenação de strings. 19 endpoints para produtos, usuários, pedidos e relatório de vendas.
 
 | # | Sev | Onde | Problema e por que importa | Evidência |
 |---|---|---|---|---|

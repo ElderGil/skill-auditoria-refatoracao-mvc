@@ -3,6 +3,15 @@
 Regras do padrão alvo, válidas para qualquer stack. O desenho concreto (pastas, nomes, comandos)
 está em `stacks/<stack>.md`; leia **só** o da stack detectada na Fase 1.
 
+## Índice
+
+1. Camadas e responsabilidades
+2. Princípios aplicados
+3. Preservar o contrato (o que não pode mudar)
+4. Segurança mínima sem quebrar o contrato
+5. Estrutura alvo por grau de organização
+6. Checklist da Fase 3
+
 ## Camadas e responsabilidades
 
 Numa API, a "View" é a camada HTTP: rota + formato da resposta. Por isso o enunciado chama de
@@ -17,6 +26,10 @@ Numa API, a "View" é a camada HTTP: rota + formato da resposta. Por isso o enun
 | **Services** (opcional) | Integrações externas atrás de uma interface pequena: pagamento, e-mail, notificação | config | regra de domínio; ser chamado direto pela rota |
 | **Middlewares** | Tratamento centralizado de erro, autenticação, CORS configurado, log de requisição | config | regra de negócio |
 | **Entry point / composition root** | Criar a app, carregar config, inicializar banco, registrar rotas e middlewares, injetar dependências, subir o servidor | tudo | lógica de negócio |
+
+**Views/routes e controllers ficam em pastas separadas.** Blueprint/router é view; ele chama uma
+função de controller. Juntar os dois numa pasta só (ex.: `controllers/` com blueprints) reprova o
+item "Views/Routes separadas" do checklist.
 
 Regras de dependência (setas só para dentro):
 
@@ -61,8 +74,9 @@ erro passa de HTML para JSON.
 
 ## Segurança mínima sem quebrar o contrato
 
-Quando o projeto não tem autenticação, não invente um sistema de login completo (isso muda todos os
-clientes). Aplique o mínimo que fecha o risco e registre o resto como melhoria proposta:
+Quando o projeto não tem autenticação, não invente um sistema de login completo: exigir token nas
+rotas de cliente (listar, criar pedido, ver perfil) muda todos os clientes e fica como **melhoria
+proposta**, não entra na Fase 3. Aplique só o mínimo que fecha o risco:
 - **Rota que executa SQL/código arbitrário:** remover.
 - **Rota administrativa ou destrutiva** (reset, relatório financeiro, exclusão de usuário): exigir
   o cabeçalho `X-Admin-Token` igual à variável `ADMIN_TOKEN`. Sem a variável configurada, a rota

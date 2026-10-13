@@ -278,13 +278,22 @@ def norm(line):
     return s
 
 
-def duplicate_blocks(files, window=5):
+# Janela do detector de duplicação: 5 linhas não triviais seguidas iguais já são lógica copiada
+# (menos que isso pega boilerplate como "try/return jsonify/except"); linhas com menos de 8
+# caracteres ("else:", "})") não contam.
+DUP_WINDOW = 5
+DUP_MIN_LINE = 8
+# Quantos sinais por anti-pattern aparecem no terminal; o JSON tem todos.
+PRINT_LIMIT = 25
+
+
+def duplicate_blocks(files, window=DUP_WINDOW):
     index = {}
     for rel, lines in files.items():
         normed = [norm(line) for line in lines]
         for i in range(len(normed) - window + 1):
             chunk = normed[i:i + window]
-            if any(len(c) < 8 for c in chunk) or any(c.startswith(("import ", "from ", "#", "//")) for c in chunk):
+            if any(len(c) < DUP_MIN_LINE for c in chunk) or any(c.startswith(("import ", "from ", "#", "//")) for c in chunk):
                 continue
             key = hashlib.sha1("\n".join(chunk).encode()).hexdigest()
             index.setdefault(key, []).append((rel, i + 1))
@@ -363,11 +372,11 @@ def main():
     for ap in sorted(by_ap):
         group = by_ap[ap]
         print(f"\n[{ap}] {len(group)} sinal(is)")
-        for h in group[:25]:
+        for h in group[:PRINT_LIMIT]:
             code = f"  | {h['code']}" if h["code"] else ""
             print(f"  {h['file']}:{h['line']}  {h['signal']}: {h['description']}{code}")
-        if len(group) > 25:
-            print(f"  ... +{len(group) - 25} (ver JSON)")
+        if len(group) > PRINT_LIMIT:
+            print(f"  ... +{len(group) - PRINT_LIMIT} (ver JSON)")
     if out:
         print(f"\nJSON completo: {out}")
 

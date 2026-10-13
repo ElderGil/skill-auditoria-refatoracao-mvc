@@ -30,6 +30,15 @@ import time
 import urllib.error
 import urllib.request
 
+# Tempos (segundos). Apps Flask/Express pequenas sobem em 1-3 s; 30 s cobre máquina lenta e
+# primeiro import com compilação de bytecode sem esconder uma app que travou no boot.
+BOOT_TIMEOUT = 30
+BOOT_POLL = 0.2          # intervalo entre tentativas de conexão na porta durante o boot
+SETTLE_AFTER_BOOT = 0.3  # porta aberta antes das rotas registradas (reloader do Flask)
+SETTLE_AFTER_CALL = 0.15 # tempo para um processo que vai cair por exceção assíncrona cair de fato
+REQUEST_TIMEOUT = 10     # endpoint de API local que demora mais que isso já é achado de performance
+SETUP_TIMEOUT = 300      # seed/instalação; acima disso há algo errado com o ambiente
+
 DEFAULT_EXCLUDE = [".git", ".claude", "node_modules", ".venv", "venv", "__pycache__", "instance",
                    "*.db", "*.sqlite", "*.sqlite3", ".env", "reports", ".refactor-arch"]
 
@@ -93,9 +102,9 @@ class App:
             if self.proc.poll() is not None:
                 return False
             if port_in_use(self.port):
-                time.sleep(0.3)
+                time.sleep(SETTLE_AFTER_BOOT)
                 return True
-            time.sleep(0.2)
+            time.sleep(BOOT_POLL)
         return False
 
     def alive(self):
@@ -130,7 +139,7 @@ def call(port, req):
         data = req["raw"].encode()
     r = urllib.request.Request(url, data=data, method=req.get("method", "GET"), headers=headers)
     try:
-        with urllib.request.urlopen(r, timeout=req.get("timeout", 10)) as resp:
+        with urllib.request.urlopen(r, timeout=req.get("timeout", REQUEST_TIMEOUT)) as resp:
             return resp.status, resp.headers.get("Content-Type", ""), resp.read()
     except urllib.error.HTTPError as err:
         return err.code, err.headers.get("Content-Type", ""), err.read()
@@ -196,7 +205,7 @@ def run(mode, plan, project, work):
 
     for cmd in pick(plan.get("setup"), mode) or []:
         cmd = fill(cmd, ctx)
-        res = subprocess.run(cmd, shell=True, cwd=run_dir, env=env, capture_output=True, text=True, timeout=300)
+        res = subprocess.run(cmd, shell=True, cwd=run_dir, env=env, capture_output=True, text=True, timeout=SETUP_TIMEOUT)
         with open(log_path, "a") as log:
             log.write(f"=== setup: {cmd} (exit {res.returncode})\n{res.stdout}{res.stderr}")
         if res.returncode != 0:
@@ -204,7 +213,7 @@ def run(mode, plan, project, work):
             return None, 2
 
     start_cmd = fill(pick(plan["start"], mode), ctx)
-    app = App(start_cmd, run_dir, env, log_path, port, plan.get("boot_timeout", 30))
+    app = App(start_cmd, run_dir, env, log_path, port, plan.get("boot_timeout", BOOT_TIMEOUT))
     results = []
     try:
         if not app.start():
@@ -221,7 +230,7 @@ def run(mode, plan, project, work):
                     print(app.log_tail())
                     return None, 2
             status, ctype, raw = call(port, req)
-            time.sleep(0.15)
+            time.sleep(SETTLE_AFTER_CALL)
             crashed = not app.alive()
             kind, sh = body_shape(ctype, raw)
             results.append({"id": req["id"], "method": req.get("method", "GET"), "path": req["path"],

@@ -3,6 +3,12 @@
 Leia junto com `mvc-guidelines.md`. Vale para Flask 2.x/3.x, com SQL à mão (`sqlite3`) ou
 Flask-SQLAlchemy.
 
+## Índice
+
+1. Árvore alvo
+2. Padrões (entry point, config, conexão, ORM, error handler, senha, token, debug)
+3. Comandos de validação
+
 ## Árvore alvo
 
 ```
@@ -18,7 +24,7 @@ Flask-SQLAlchemy.
     ├── database.py             # conexão por requisição (sqlite3) ou instância db = SQLAlchemy()
     ├── models/                 # uma entidade por arquivo: <entidade>_model.py
     ├── controllers/            # um por recurso: <recurso>_controller.py
-    ├── views/                  # blueprints: <recurso>_routes.py
+    ├── views/                  # blueprints (rotas HTTP): <recurso>_routes.py — chamam os controllers
     ├── services/               # integrações externas (notificação, pagamento), se houver
     ├── middlewares/
     │   ├── error_handler.py    # AppError + register_error_handlers(app)

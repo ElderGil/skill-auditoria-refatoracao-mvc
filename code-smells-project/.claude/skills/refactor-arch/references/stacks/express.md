@@ -3,6 +3,12 @@
 Leia junto com `mvc-guidelines.md`. Vale para Express 4 e 5, CommonJS ou ESM (siga o que o
 projeto usa; não converta de um para o outro).
 
+## Índice
+
+1. Árvore alvo
+2. Padrões (sqlite3 com Promise e transação, erro async, config, senha, produção)
+3. Comandos de validação
+
 ## Árvore alvo
 
 ```

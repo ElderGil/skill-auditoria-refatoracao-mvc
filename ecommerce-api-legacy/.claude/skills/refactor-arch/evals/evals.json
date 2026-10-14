@@ -1,0 +1,44 @@
+[
+  {
+    "id": "monolito-flask",
+    "skills": ["refactor-arch"],
+    "query": "/refactor-arch",
+    "files": ["code-smells-project/"],
+    "expected_behavior": [
+      "Fase 1 imprime o bloco PHASE 1 com Python, Flask 3.1.1, domínio de e-commerce (produtos, pedidos, usuários), grau A (monólito), 4 arquivos e as tabelas produtos, usuarios, pedidos, itens_pedido",
+      "Fase 2 traz pelo menos 5 achados com arquivo:linha, ordenados de CRITICAL a LOW, incluindo SQL injection, o endpoint /admin/query, senha em texto puro e SECRET_KEY no código",
+      "O relatório não reproduz nenhum valor de segredo nem senha",
+      "A execução para em 'Phase 2 complete. Proceed with refactoring (Phase 3)? [y/n]' sem ter alterado nenhum arquivo do projeto",
+      "Fase 3 cria pastas separadas de config, models, views/routes, controllers e error handling, e mantém python app.py como entrada",
+      "smoke.py compare termina com exit 0 e o resumo PHASE 3 mostra os endpoints conferidos contra o baseline"
+    ]
+  },
+  {
+    "id": "express-god-class",
+    "skills": ["refactor-arch"],
+    "query": "/refactor-arch",
+    "files": ["ecommerce-api-legacy/"],
+    "expected_behavior": [
+      "Fase 1 detecta Node.js, Express 4, SQLite em memória, domínio LMS com checkout e grau A (god class AppManager)",
+      "Fase 2 aponta credenciais no código, log de cartão e chave, badCrypto e a queda do processo com cartão numérico (sonda no baseline), sem copiar os valores",
+      "A seção de APIs deprecated existe e diz que o código não usa API removida, com versões antigas tratadas como dependência",
+      "A execução para na pergunta da Fase 2 sem alterar arquivos",
+      "Fase 3 troca callbacks aninhados por async/await com transação, mantém npm start e os campos usr/eml/pwd/c_id/card",
+      "smoke.py compare termina com exit 0 e a sonda de cartão numérico passa a receber 400 sem derrubar o processo"
+    ]
+  },
+  {
+    "id": "flask-camadas-parciais",
+    "skills": ["refactor-arch"],
+    "query": "/refactor-arch",
+    "files": ["task-manager-api/"],
+    "expected_behavior": [
+      "Fase 1 detecta Python, Flask 3.0 com Flask-SQLAlchemy, domínio Task Manager (tarefas, usuários, categorias) e grau B (camadas parciais)",
+      "Fase 2 encontra problemas mesmo com pastas de camada: MD5 em senha, senha no to_dict, token falso, atribuição de role, N+1 e regra de negócio nas rotas",
+      "Fase 2 inclui datetime.utcnow e a interface Model.query como APIs deprecated/legadas, com o equivalente moderno",
+      "A execução para na pergunta da Fase 2 sem alterar arquivos",
+      "Fase 3 mantém as camadas que servem, cria controllers e error handler central, usa Task.is_overdue em vez das cópias da regra",
+      "smoke.py compare termina com exit 0 com seed.py rodando no setup e todos os endpoints respondendo"
+    ]
+  }
+]

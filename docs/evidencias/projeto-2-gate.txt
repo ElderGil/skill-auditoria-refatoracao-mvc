@@ -1,0 +1,22 @@
+== smoke compare: ecommerce-api-legacy
+[ok] aplicação no ar: node src/app.js (porta 53457)
+  200  POST   /api/checkout                          checkout-sucesso
+  200  GET    /api/admin/financial-report            relatorio-financeiro
+  400  POST   /api/checkout                          checkout-recusado
+  404  POST   /api/checkout                          checkout-curso-inexistente
+  400  POST   /api/checkout                          checkout-campos-ausentes
+  200  DELETE /api/users/1                           deletar-usuario
+  401  GET    /api/admin/financial-report            sonda-relatorio-sem-token
+  401  DELETE /api/users/999                         sonda-delete-sem-token
+  404  DELETE /api/users/999                         sonda-delete-inexistente
+  200  GET    /api/admin/financial-report            sonda-relatorio-pos-exclusao
+  401  POST   /api/checkout                          sonda-email-alheio
+  409  POST   /api/checkout                          sonda-checkout-duplicado
+  400  POST   /api/checkout                          sonda-sem-senha
+  400  POST   /api/checkout                          sonda-cartao-invalido
+  400  POST   /api/checkout                          sonda-email-invalido
+  400  POST   /api/checkout                          sonda-json-malformado
+  400  POST   /api/checkout                          sonda-cid-objeto
+  400  POST   /api/checkout                          sonda-cartao-numero
+
+[VERDE] 18 requisições conferidas contra o baseline: contrato preservado, mudanças declaradas confirmadas, nenhum processo caiu.

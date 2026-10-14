@@ -1,0 +1,31 @@
+$ ADMIN_TOKEN=token-local-de-teste npm start   # 13/10/2026 21:52:19, cópia limpa do projeto, PORT=5792
+--- log do servidor no boot ---
+
+> desafio-arquitetura-ia-boilerplate@1.0.0 start
+> node src/app.js
+
+2026-10-14T00:52:20.328Z WARN PAYMENT_GATEWAY_KEY não definido: gateway em modo simulado.
+2026-10-14T00:52:20.342Z INFO LMS API rodando na porta 5792
+--- requisições ---
+$ curl -X POST /api/checkout -d '{"usr":"Maria","eml":"maria@exemplo.com","pwd":"senha-da-maria","c_id":1,"card":"4111222233334444"}' 
+{"msg":"Sucesso","enrollment_id":2}
+  → HTTP 200
+$ curl -X POST /api/checkout -d '{"usr":"Maria","eml":"maria@exemplo.com","pwd":"senha-da-maria","c_id":1,"card":"4111222233334444"}' 
+Usuário já matriculado neste curso
+  → HTTP 409
+$ curl -X POST /api/checkout -d '{"usr":"Joao","eml":"joao@exemplo.com","pwd":"x1","c_id":1,"card":4111222233334444}' 
+card deve ter de 13 a 19 dígitos
+  → HTTP 400
+$ curl -X POST /api/checkout -d '{"usr":"Joao","eml":"joao@exemplo.com","pwd":"x1","c_id":1,"card":"5111222233334444"}' 
+Pagamento recusado
+  → HTTP 400
+$ curl -X GET /api/admin/financial-report  
+Não autorizado
+  → HTTP 401
+$ curl -X GET /api/admin/financial-report  -H 'Authorization: ***'
+[{"course":"Clean Architecture","revenue":1994,"students":[{"student":"Leonan","paid":997},{"student":"Maria","paid":997}]},{"course":"Docker","revenue":0,"students":[]}]
+  → HTTP 200
+$ curl -X DELETE /api/users/999  -H 'Authorization: ***'
+Usuário não encontrado
+  → HTTP 404
+--- fim ---

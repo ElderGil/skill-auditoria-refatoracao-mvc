@@ -1,0 +1,48 @@
+$ python seed.py && python app.py   # 13/10/2026 21:57:46, cópia limpa do projeto, PORT=5793
+--- log do servidor no boot ---
+2026-10-13 21:57:46,717 WARNING src.app: SECRET_KEY não definida: chave aleatória gerada; tokens expiram a cada restart
+Seed concluído com sucesso!
+  3 usuários
+  4 categorias
+  10 tasks
+2026-10-13 21:57:47,063 WARNING src.app: SECRET_KEY não definida: chave aleatória gerada; tokens expiram a cada restart
+ * Serving Flask app 'src.app'
+ * Debug mode: off
+2026-10-13 21:57:47,077 INFO werkzeug: WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5793
+2026-10-13 21:57:47,077 INFO werkzeug: Press CTRL+C to quit
+2026-10-13 21:57:47,519 INFO werkzeug: 127.0.0.1 - - [13/Oct/2026 21:57:47] "GET / HTTP/1.1" 200 -
+--- requisições ---
+$ curl -X GET /health  
+{"status":"ok","timestamp":"2026-10-13 21:57:48.060377"}
+
+  → HTTP 200
+$ curl -X GET /tasks/1  
+{"category_id":1,"created_at":"2026-10-14 00:57:46.874179","description":"Adicionar autentica\u00e7\u00e3o real com JWT","due_date":"2026-10-11 00:57:46.872390","id":1,"overdue":true,"priority":1,"status":"pending","tags":[],"title":"Implementar autentica\u00e7\u00e3o JWT","updated_at":"2026-10-14 00:57:46.874180","user_id":1}
+
+  → HTTP 200
+$ curl -X GET /users/1  
+{"active":true,"created_at":"2026-10-14 00:57:46.870651","email":"joao@email.com","id":1,"name":"Jo\u00e3o Silva","role":"admin","tasks":[{"category_id":1,"created_at":"2026-10-14 00:57:46.874179","description":"Adicionar autentica\u00e7\u00e3o real com JWT","due_date":"2026-10-11 00:57:46.872390","id":1,"priority":1,"status":"pending","tags":[],"title":"Implementar autentica\u00e7\u00e3o JWT","updated_at":"2026-10-14 00:57:46.874180","user_id":1},{"category_id":4,"created_at":"2026-10-14 00:57:46.874181","description":"Filtro n\u00e3o funciona com caracteres especiais","due_date":"2026-10-13 
+$ curl -X POST /login -d '{"email":"joao@email.com","password":"1234"}' 
+{"message":"Login realizado com sucesso","token":"<token assinado, omitido>","user":{"active":true,"created_at":"2026-10-14 00:57:46.870651","email":"joao@email.com","id":1,"name":"Jo\u00e3o Silva","role":"admin"}}
+
+  → HTTP 200
+$ curl -X POST /tasks -d '{"title":"Revisar PR","priority":"alta"}' 
+{"error":"Prioridade deve ser entre 1 e 5"}
+
+  → HTTP 400
+$ curl -X POST /users -d '{"name":"Hacker","email":"h@x.com","password":"12345","role":"admin"}' 
+{"error":"Autentica\u00e7\u00e3o necess\u00e1ria"}
+
+  → HTTP 401
+$ curl -X PUT /users/2 -d '{"role":"admin"}' 
+{"error":"Autentica\u00e7\u00e3o necess\u00e1ria"}
+
+  → HTTP 401
+$ curl -X GET /tasks/search?q=_  
+[]
+
+  → HTTP 200
+$ curl -X GET /reports/summary  
+{"generated_at":"2026-10-14 00:57:48.180212","overdue":{"count":2,"tasks":[{"days_overdue":3,"due_date":"2026-10-11 00:57:46.872390","id":1,"title":"Implementar autentica\u00e7\u00e3o JWT"},{"days_overdue":1,"due_date":"2026-10-13 00:57:46.872390","id":4,"title":"Corrigir bug no filtro de busca"}]},"overview":{"total_categories":4,"total_tasks":10,"total_users":3},"recent_activity":{"tasks_completed_last_7_days":1,"tasks_created_last_7_days":10},"tasks_by_priority":{"critical":2,"high":3,"low":2,"medium":3,"minimal":0},"tasks_by_status":{"cancelled":1,"done":1,"in_progress":2,"pending":6},"use
+--- fim ---

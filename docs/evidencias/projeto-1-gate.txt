@@ -1,0 +1,53 @@
+== smoke compare: code-smells-project
+[ok] aplicação no ar: <work> app.py (porta 53248)
+  200  GET    /                                      index
+  200  GET    /health                                health
+  200  GET    /produtos                              listar-produtos
+  200  GET    /produtos/1                            buscar-produto
+  404  GET    /produtos/9999                         buscar-produto-inexistente
+  200  GET    /produtos/busca?q=Mouse&categoria=informatica&preco_min=10&preco_max=500 busca-produtos
+  200  GET    /usuarios                              listar-usuarios
+  200  GET    /usuarios/2                            buscar-usuario
+  404  GET    /usuarios/9999                         buscar-usuario-inexistente
+  201  POST   /produtos                              criar-produto
+  400  POST   /produtos                              criar-produto-sem-nome
+  201  POST   /usuarios                              criar-usuario
+  400  POST   /usuarios                              criar-usuario-incompleto
+  200  POST   /login                                 login-ok
+  401  POST   /login                                 login-senha-errada
+  201  POST   /pedidos                               criar-pedido
+  400  POST   /pedidos                               criar-pedido-sem-itens
+  400  POST   /pedidos                               criar-pedido-produto-inexistente
+  400  POST   /pedidos                               criar-pedido-sem-estoque
+  200  GET    /pedidos                               listar-pedidos
+  200  GET    /pedidos/usuario/2                     listar-pedidos-usuario
+  200  GET    /relatorios/vendas                     relatorio-vendas
+  200  PUT    /produtos/11                           atualizar-produto
+  404  PUT    /produtos/9999                         atualizar-produto-inexistente
+  200  PUT    /pedidos/1/status                      status-aprovado
+  400  PUT    /pedidos/1/status                      status-invalido
+  200  PUT    /pedidos/1/status                      status-cancelado
+  200  DELETE /produtos/11                           deletar-produto
+  404  DELETE /produtos/9999                         deletar-produto-inexistente
+  404  POST   /admin/query                           admin-query
+  401  POST   /login                                 sonda-sql-login
+  201  POST   /produtos                              sonda-apostrofo-produto
+  200  GET    /produtos/busca?q=O%27Reilly           sonda-apostrofo-busca
+  400  POST   /produtos                              sonda-preco-texto
+  400  POST   /produtos                              sonda-estoque-fracionado
+  400  GET    /produtos/busca?preco_min=abc          sonda-preco-min-texto
+  400  PUT    /produtos/10                           sonda-update-categoria-invalida
+  409  POST   /usuarios                              sonda-email-duplicado
+  400  POST   /usuarios                              sonda-nome-numero
+  400  POST   /login                                 sonda-login-sem-json
+  400  POST   /pedidos                               sonda-qtd-negativa
+  400  POST   /pedidos                               sonda-qtd-texto
+  400  POST   /pedidos                               sonda-item-repetido
+  400  POST   /pedidos                               sonda-usuario-inexistente
+  404  PUT    /pedidos/9999/status                   sonda-status-pedido-inexistente
+  400  PUT    /pedidos/1/status                      sonda-reabrir-cancelado
+  400  PUT    /pedidos/1/status                      sonda-status-sem-corpo
+  404  POST   /admin/query                           sonda-admin-query-sem-auth
+  401  POST   /admin/reset-db                        sonda-reset-sem-auth
+
+[VERDE] 49 requisições conferidas contra o baseline: contrato preservado, mudanças declaradas confirmadas, nenhum processo caiu.

@@ -1,0 +1,49 @@
+$ python app.py   # 13/10/2026 21:48:12, cópia limpa do projeto, PORT=5791
+--- log do servidor no boot ---
+2026-10-13 21:48:12,342 WARNING src.app: SECRET_KEY não definida no ambiente; usando chave aleatória gerada neste boot
+2026-10-13 21:48:12,484 INFO src.app: banco vazio: dados de exemplo carregados
+2026-10-13 21:48:12,485 INFO __main__: servidor iniciando em http://127.0.0.1:5791
+ * Serving Flask app 'src.app'
+ * Debug mode: off
+2026-10-13 21:48:12,489 INFO werkzeug: WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5791
+2026-10-13 21:48:12,489 INFO werkzeug: Press CTRL+C to quit
+2026-10-13 21:48:12,750 INFO werkzeug: 127.0.0.1 - - [13/Oct/2026 21:48:12] "GET / HTTP/1.1" 200 -
+--- requisições ---
+$ curl -X GET /health  
+{"ambiente":"producao","counts":{"pedidos":0,"produtos":10,"usuarios":3},"database":"connected","db_path":"loja.db","debug":false,"status":"ok","versao":"1.0.0"}
+
+  → HTTP 200
+$ curl -X GET /produtos/1  
+{"dados":{"ativo":1,"categoria":"informatica","criado_em":"2026-10-14 00:48:12","descricao":"Notebook potente para jogos","estoque":10,"id":1,"nome":"Notebook Gamer","preco":5999.99},"sucesso":true}
+
+  → HTTP 200
+$ curl -X GET /produtos/busca?q=O%27Reilly  
+{"dados":[],"sucesso":true,"total":0}
+
+  → HTTP 200
+$ curl -X POST /login -d '{"email":"admin@loja.com' --","senha":"x"}' 
+{"erro":"Email ou senha inv\u00e1lidos","sucesso":false}
+
+  → HTTP 401
+$ curl -X POST /pedidos -d '{"usuario_id":1,"itens":[{"produto_id":1,"quantidade":-5}]}' 
+{"erro":"Quantidade deve ser maior que zero","sucesso":false}
+
+  → HTTP 400
+$ curl -X POST /pedidos -d '{"usuario_id":2,"itens":[{"produto_id":2,"quantidade":1}]}' 
+{"dados":{"pedido_id":1,"total":89.9},"mensagem":"Pedido criado com sucesso","sucesso":true}
+
+  → HTTP 201
+$ curl -X GET /relatorios/vendas  
+{"dados":{"desconto_aplicavel":0,"faturamento_bruto":89.9,"faturamento_liquido":89.9,"pedidos_aprovados":0,"pedidos_cancelados":0,"pedidos_pendentes":1,"ticket_medio":89.9,"total_pedidos":1},"sucesso":true}
+
+  → HTTP 200
+$ curl -X POST /admin/query -d '{"sql":"SELECT 1"}' 
+{"erro":"The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.","sucesso":false}
+
+  → HTTP 404
+$ curl -X POST /admin/reset-db  
+{"erro":"Rotas administrativas desabilitadas","sucesso":false}
+
+  → HTTP 403
+--- fim ---
